@@ -1,11 +1,13 @@
 {
+    "app" : "kipenzi",
+    "browser_version" : "0.0",
     "couchbase": {
         "server": "127.0.0.1:8091",
         "username": "Administrator",
         "password": "password",
         "buckets": {
             "profiles": "profiles",
-            "travel": "travel-sample"   
+            "user_store": "user_store"   
         }
     }
 }

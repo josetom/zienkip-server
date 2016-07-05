@@ -4,12 +4,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var couchbase = require('couchbase');
+//var couchbase = require('couchbase');
+var db = require('./db/couchbase');
 
 var config = require('./config');
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var login = require('./routes/login');
 var database = require('./routes/database');
 
 
@@ -27,13 +27,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var couchCluster = new couchbase.Cluster(config.couchbase.server);
-var buckets = {};
+//var couchCluster = new couchbase.Cluster(config.couchbase.server);
+//var buckets = {};
+//
+//buckets.profiles = couchCluster.openBucket(config.couchbase.buckets.profiles);
+//buckets.travel = couchCluster.openBucket(config.couchbase.buckets.travel);
+//
+//module.exports.buckets = buckets;
 
-buckets.profiles = couchCluster.openBucket(config.couchbase.buckets.profiles);
-buckets.travel = couchCluster.openBucket(config.couchbase.buckets.travel);
-
-module.exports.buckets = buckets;
+db.start();
 
 app.use(function(req, res, next) {
         res.header('Access-Control-Allow-Headers', 'origin, authorization, X-Requested-With, content-type, accept');
@@ -46,7 +48,6 @@ app.use(function(req, res, next) {
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/login', login);
 app.use('/db', database);
 
 // catch 404 and forward to error handler
