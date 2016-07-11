@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var db = require('./db/couchbase');
 
 var config = require('./config');
-var routes = require('./routes/index');
+var index = require('./routes/index');
 var users = require('./routes/users');
 var database = require('./routes/database');
 
@@ -27,14 +27,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//var couchCluster = new couchbase.Cluster(config.couchbase.server);
-//var buckets = {};
-//
-//buckets.profiles = couchCluster.openBucket(config.couchbase.buckets.profiles);
-//buckets.travel = couchCluster.openBucket(config.couchbase.buckets.travel);
-//
-//module.exports.buckets = buckets;
-
 db.start();
 
 app.use(function(req, res, next) {
@@ -46,7 +38,18 @@ app.use(function(req, res, next) {
         next();
         });
 
-app.use('/', routes);
+
+//filter
+app.all('*',function(req,res,next){
+    if(req) {//.isAuthenticated()){
+        console.log(req.cookies);
+        next();
+    }else{
+        next(new Error(401)); // 401 Not Authorized
+    }
+});
+
+app.use('/', index);
 app.use('/users', users);
 app.use('/db', database);
 

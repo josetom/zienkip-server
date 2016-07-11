@@ -22,7 +22,7 @@ Validator.validateNewUser = function (document) {
         isValid = false;
         error.pwd = "invalid password";
     } else {
-        store_content.pwd = utils.hashPassword(document.pwd);
+        store_content.pwd = utils.generateHash(document.pwd);
         delete document.pwd;
     }
     

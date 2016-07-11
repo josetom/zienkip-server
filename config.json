@@ -9,5 +9,10 @@
             "profiles": "profiles",
             "user_store": "user_store"   
         }
-    }
+    },
+    "encoding": {
+        "base64": "base64",
+        "hex": "hex"
+    },
+    "hash_key": "kipenzi!23$"
 }

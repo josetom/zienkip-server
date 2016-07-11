@@ -1,10 +1,11 @@
 //http://query.pub.couchbase.com/tutorial/#index
 
 var console = require('console');
-var config = require('../config');
-var couchbase = require('couchbase');
-var n1ql = require('couchbase').N1qlQuery;
-var uuid = require('uuid');
+var config  = require('../config');
+var couchbase   = require('couchbase');
+var n1ql    = require('couchbase').N1qlQuery;
+var uuid    = require('uuid');
+var q       = require('q');
 
 function Database() {};
 var buckets = {};
@@ -26,17 +27,14 @@ Database.start = function () {
 };
 
 //generic N1ql query
-Database.query = function(bucket, query_string, params, callback) {
+Database.query = function(bucket, query_string, params) {
     
+    var defer = q.defer();
     var query = n1ql.fromString(query_string);
     
-    buckets[bucket].query(query, params, function(error, result) {
-        if(error) {
-            return callback(error, null);
-        }
-        callback(null, result);
-    });
-}
+    buckets[bucket].query(query, params, defer.makeNodeResolver());
+    return defer.promise;
+};
 
 //generic insert
 Database.insert = function(bucket, key, value, callback) {
@@ -53,7 +51,7 @@ Database.insert = function(bucket, key, value, callback) {
 };
 
 //delete a record from given bucket and key
-Database.delete = function(bucket, key, callback) {
+Database.remove = function(bucket, key, callback) {
     
     buckets[bucket].remove(key, function(err,result){
         if (err) {
